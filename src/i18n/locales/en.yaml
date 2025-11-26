@@ -1,0 +1,47 @@
+common:
+  changePassword: 'Change Password'
+  currentPassword: 'Current Password'
+  newPassword: 'New Password'
+  confirmPassword: 'Confirm Password'
+  submit: 'Submit'
+  cancel: 'Cancel'
+  back: 'Back'
+  loading: 'Loading...'
+  success: 'Success'
+  error: 'Error'
+
+home:
+  title: 'LDAP Password Change Portal'
+  description: 'Change your LDAP password securely'
+  startButton: 'Change My Password'
+  welcome: 'Welcome'
+
+changePassword:
+  title: 'Change Your Password'
+  description: 'Please enter your account, current password and choose a new one'
+  accountLabel: 'Account / Username'
+  currentPasswordLabel: 'Current Password'
+  newPasswordLabel: 'New Password'
+  confirmPasswordLabel: 'Confirm New Password'
+  passwordRequirements: 'Password Requirements'
+  requirement1: 'At least 8 characters long'
+  requirement2: 'Contains at least one uppercase letter'
+  requirement3: 'Contains at least one lowercase letter'
+  requirement4: 'Contains at least one number'
+  requirement5: 'Contains at least one special character'
+  submitButton: 'Change Password'
+  successMessage: 'Password changed successfully!'
+  errorMessage: 'Failed to change password. Please try again.'
+  validation:
+    accountRequired: 'Please enter your account or username'
+    currentPasswordRequired: 'Please enter your current password'
+    currentPasswordIncorrect: 'Current password is incorrect'
+    newPasswordRequired: 'Please enter a new password'
+    newPasswordWeak: 'Password does not meet requirements'
+    confirmPasswordRequired: 'Please confirm your new password'
+    passwordMismatch: 'New passwords do not match'
+
+language:
+  english: 'English'
+  traditionalChinese: '繁體中文'
+  japanese: '日本語'

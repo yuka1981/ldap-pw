@@ -1,0 +1,47 @@
+common:
+  changePassword: 'パスワード変更'
+  currentPassword: '現在のパスワード'
+  newPassword: '新しいパスワード'
+  confirmPassword: 'パスワード確認'
+  submit: '送信'
+  cancel: 'キャンセル'
+  back: '戻る'
+  loading: '読み込み中...'
+  success: '成功'
+  error: 'エラー'
+
+home:
+  title: 'LDAP パスワード変更ポータル'
+  description: 'LDAP パスワードを安全に変更'
+  startButton: 'パスワードを変更'
+  welcome: 'ようこそ'
+
+changePassword:
+  title: 'パスワードを変更'
+  description: 'アカウント、現在のパスワードを入力し、新しいパスワードを選択してください'
+  accountLabel: 'アカウント / ユーザー名'
+  currentPasswordLabel: '現在のパスワード'
+  newPasswordLabel: '新しいパスワード'
+  confirmPasswordLabel: '新しいパスワード（確認）'
+  passwordRequirements: 'パスワード要件'
+  requirement1: '8文字以上'
+  requirement2: '大文字を1つ以上含む'
+  requirement3: '小文字を1つ以上含む'
+  requirement4: '数字を1つ以上含む'
+  requirement5: '特殊文字を1つ以上含む'
+  submitButton: 'パスワードを変更'
+  successMessage: 'パスワードの変更に成功しました！'
+  errorMessage: 'パスワードの変更に失敗しました。もう一度お試しください。'
+  validation:
+    accountRequired: 'アカウントまたはユーザー名を入力してください'
+    currentPasswordRequired: '現在のパスワードを入力してください'
+    currentPasswordIncorrect: '現在のパスワードが正しくありません'
+    newPasswordRequired: '新しいパスワードを入力してください'
+    newPasswordWeak: 'パスワードが要件を満たしていません'
+    confirmPasswordRequired: '新しいパスワードを確認してください'
+    passwordMismatch: '新しいパスワードが一致しません'
+
+language:
+  english: 'English'
+  traditionalChinese: '繁體中文'
+  japanese: '日本語'

@@ -1,0 +1,47 @@
+common:
+  changePassword: '修改密碼'
+  currentPassword: '目前密碼'
+  newPassword: '新密碼'
+  confirmPassword: '確認密碼'
+  submit: '提交'
+  cancel: '取消'
+  back: '返回'
+  loading: '載入中...'
+  success: '成功'
+  error: '錯誤'
+
+home:
+  title: 'LDAP 密碼修改入口'
+  description: '安全地修改您的 LDAP 密碼'
+  startButton: '修改我的密碼'
+  welcome: '歡迎'
+
+changePassword:
+  title: '修改您的密碼'
+  description: '請輸入您的帳號、目前密碼並選擇新密碼'
+  accountLabel: '帳號 / 使用者名稱'
+  currentPasswordLabel: '目前密碼'
+  newPasswordLabel: '新密碼'
+  confirmPasswordLabel: '確認新密碼'
+  passwordRequirements: '密碼要求'
+  requirement1: '至少 8 個字元'
+  requirement2: '至少包含一個大寫字母'
+  requirement3: '至少包含一個小寫字母'
+  requirement4: '至少包含一個數字'
+  requirement5: '至少包含一個特殊字元'
+  submitButton: '修改密碼'
+  successMessage: '密碼修改成功！'
+  errorMessage: '密碼修改失敗，請重試。'
+  validation:
+    accountRequired: '請輸入帳號或使用者名稱'
+    currentPasswordRequired: '請輸入目前密碼'
+    currentPasswordIncorrect: '目前密碼不正確'
+    newPasswordRequired: '請輸入新密碼'
+    newPasswordWeak: '密碼不符合要求'
+    confirmPasswordRequired: '請確認新密碼'
+    passwordMismatch: '新密碼不一致'
+
+language:
+  english: 'English'
+  traditionalChinese: '繁體中文'
+  japanese: '日本語'
