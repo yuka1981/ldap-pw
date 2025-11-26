@@ -1,14 +1,16 @@
+'use client';
+
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useI18n } from '../../contexts/I18nContext';
+import { useRouter } from 'next/navigation';
+import { useI18n } from '@/contexts/I18nContext';
 import './Home.css';
 
 export const Home: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { t } = useI18n();
 
   const handleStart = () => {
-    navigate('/change-password');
+    router.push('/change-password');
   };
 
   return (

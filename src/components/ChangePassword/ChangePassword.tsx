@@ -1,12 +1,14 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useI18n } from '../../contexts/I18nContext';
-import { changePassword } from '../../services/passwordService';
-import { validatePassword } from '../../utils/passwordValidation';
+import { useRouter } from 'next/navigation';
+import { useI18n } from '@/contexts/I18nContext';
+import { changePassword } from '@/services/passwordService';
+import { validatePassword } from '@/utils/passwordValidation';
 import './ChangePassword.css';
 
 export const ChangePassword: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { t, locale } = useI18n();
 
   const [formData, setFormData] = useState({
@@ -141,24 +143,48 @@ export const ChangePassword: React.FC = () => {
       // 目前使用 alert 顯示成功訊息，建議改為更友善的 UI 提示（例如：Toast 通知）
       // Success - could navigate to success page or show success message
       alert(t.changePassword.successMessage);
-      navigate('/');
+      router.push('/');
     } catch (error: any) {
-      // TODO: 根據 LDAP API 實際錯誤回應調整錯誤處理邏輯
-      // 當實作 LDAP API 後，需要根據實際的錯誤碼和錯誤訊息進行更精確的錯誤處理
-      // 例如：
-      // - LDAP 錯誤碼 49: 認證失敗（目前密碼不正確）
-      // - LDAP 錯誤碼 53: 密碼策略違規（新密碼不符合策略要求）
-      // - LDAP 錯誤碼 19: 約束違規（例如：不能與舊密碼相同）
-      // Handle specific error messages from API
+      // 處理 LDAP API 錯誤回應
+      // ldapts 套件會拋出包含錯誤碼和訊息的錯誤
+      const errorMessage = error?.message || '';
+
+      // LDAP 錯誤碼 49: 認證失敗（目前密碼不正確）
       if (
-        error?.message?.includes('current password') ||
-        error?.message?.includes('incorrect')
+        error?.code === 49 ||
+        errorMessage.includes('current password') ||
+        errorMessage.includes('incorrect') ||
+        errorMessage.includes('Invalid Credentials')
       ) {
         setErrors((prev) => ({
           ...prev,
           currentPassword: t.changePassword.validation.currentPasswordIncorrect,
         }));
-      } else {
+      }
+      // LDAP 錯誤碼 53: 密碼策略違規（新密碼不符合策略要求）
+      else if (
+        error?.code === 53 ||
+        errorMessage.includes('Password does not meet policy') ||
+        errorMessage.includes('password policy')
+      ) {
+        setErrors((prev) => ({
+          ...prev,
+          newPassword: t.changePassword.validation.newPasswordWeak,
+        }));
+      }
+      // LDAP 錯誤碼 19: 約束違規（例如：不能與舊密碼相同）
+      else if (
+        error?.code === 19 ||
+        errorMessage.includes('constraint') ||
+        errorMessage.includes('same as old password')
+      ) {
+        setErrors((prev) => ({
+          ...prev,
+          newPassword: t.changePassword.validation.newPasswordWeak,
+        }));
+      }
+      // 其他錯誤（連線錯誤、伺服器錯誤等）
+      else {
         setSubmitError(t.changePassword.errorMessage);
       }
     } finally {
@@ -167,7 +193,7 @@ export const ChangePassword: React.FC = () => {
   };
 
   const handleBack = () => {
-    navigate('/');
+    router.push('/');
   };
 
   return (

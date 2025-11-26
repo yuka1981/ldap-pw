@@ -1,5 +1,7 @@
+'use client';
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Locale, getTranslations, Translations, defaultLocale } from '../i18n';
+import { Locale, getTranslations, Translations, defaultLocale } from '@/i18n';
 
 interface I18nContextType {
   locale: Locale;
@@ -22,23 +24,31 @@ interface I18nProviderProps {
 }
 
 export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
-  const [locale, setLocaleState] = useState<Locale>(() => {
+  const [locale, setLocaleState] = useState<Locale>(defaultLocale);
+  const [mounted, setMounted] = useState(false);
+
+  // Handle client-side only localStorage access
+  useEffect(() => {
+    setMounted(true);
     const saved = localStorage.getItem('locale') as Locale;
     const initialLocale = saved && ['en', 'zh-TW', 'ja'].includes(saved) ? saved : defaultLocale;
-    // Set HTML lang attribute immediately on initialization
+    setLocaleState(initialLocale);
     document.documentElement.lang = initialLocale;
-    return initialLocale;
-  });
+  }, []);
 
   const setLocale = (newLocale: Locale) => {
     setLocaleState(newLocale);
-    localStorage.setItem('locale', newLocale);
-    document.documentElement.lang = newLocale;
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('locale', newLocale);
+      document.documentElement.lang = newLocale;
+    }
   };
 
   useEffect(() => {
-    document.documentElement.lang = locale;
-  }, [locale]);
+    if (mounted) {
+      document.documentElement.lang = locale;
+    }
+  }, [locale, mounted]);
 
   const value: I18nContextType = {
     locale,

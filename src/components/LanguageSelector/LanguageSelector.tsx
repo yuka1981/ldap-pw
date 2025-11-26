@@ -1,6 +1,8 @@
+'use client';
+
 import React from 'react';
-import { useI18n } from '../../contexts/I18nContext';
-import { Locale } from '../../i18n';
+import { useI18n } from '@/contexts/I18nContext';
+import { Locale } from '@/i18n';
 import './LanguageSelector.css';
 
 export const LanguageSelector: React.FC = () => {

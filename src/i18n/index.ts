@@ -1,6 +1,7 @@
-import en from './locales/en.yaml';
-import zhTW from './locales/zh-TW.yaml';
-import ja from './locales/ja.yaml';
+import enYaml from './locales/en.yaml?raw';
+import zhTWYaml from './locales/zh-TW.yaml?raw';
+import jaYaml from './locales/ja.yaml?raw';
+import yaml from 'js-yaml';
 
 export type Locale = 'en' | 'zh-TW' | 'ja';
 
@@ -56,10 +57,15 @@ export interface Translations {
   };
 }
 
+// 解析 YAML 檔案
+const parseYaml = (yamlContent: string): Translations => {
+  return yaml.load(yamlContent) as Translations;
+};
+
 export const translations: Record<Locale, Translations> = {
-  en,
-  'zh-TW': zhTW,
-  ja,
+  en: parseYaml(enYaml),
+  'zh-TW': parseYaml(zhTWYaml),
+  ja: parseYaml(jaYaml),
 };
 
 export const defaultLocale: Locale = 'en';
