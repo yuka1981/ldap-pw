@@ -1,10 +1,10 @@
 /**
- * Validates password strength according to requirements:
- * - At least 8 characters long
- * - Contains at least one uppercase letter
- * - Contains at least one lowercase letter
- * - Contains at least one number
- * - Contains at least one special character
+ * 驗證密碼強度是否符合要求：
+ * - 至少 8 個字元
+ * - 至少包含一個大寫字母
+ * - 至少包含一個小寫字母
+ * - 至少包含一個數字
+ * - 至少包含一個特殊字元
  */
 export const validatePassword = (password: string): boolean => {
   if (password.length < 8) {

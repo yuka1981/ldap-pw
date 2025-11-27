@@ -7,7 +7,7 @@ import { NextRequest } from 'next/server';
 import { Client } from 'ldapts';
 import { getLDAPConfig, buildUserDN } from '@/config/ldap.config';
 
-// Mock ldapts
+// 模擬 ldapts
 jest.mock('ldapts');
 jest.mock('@/config/ldap.config');
 

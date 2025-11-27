@@ -22,32 +22,32 @@ export const ChangePassword: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
 
-  // Update error messages when locale changes
+  // 當語系變更時更新錯誤訊息
   useEffect(() => {
     if (Object.keys(errors).length > 0) {
-      // Re-validate form to update error messages with new locale
+      // 重新驗證表單以使用新語系更新錯誤訊息
       const newErrors: Record<string, string> = {};
 
-      // Update account error if it exists
+      // 更新帳號錯誤（如果存在）
       if (errors.account) {
         if (!formData.account) {
           newErrors.account = t.changePassword.validation.accountRequired;
         }
       }
 
-      // Update current password error if it exists
+      // 更新目前密碼錯誤（如果存在）
       if (errors.currentPassword) {
         if (!formData.currentPassword) {
           newErrors.currentPassword =
             t.changePassword.validation.currentPasswordRequired;
         } else {
-          // If password is incorrect (from API error)
+          // 如果密碼不正確（來自 API 錯誤）
           newErrors.currentPassword =
             t.changePassword.validation.currentPasswordIncorrect;
         }
       }
 
-      // Update new password error if it exists
+      // 更新新密碼錯誤（如果存在）
       if (errors.newPassword) {
         if (!formData.newPassword) {
           newErrors.newPassword =
@@ -57,7 +57,7 @@ export const ChangePassword: React.FC = () => {
         }
       }
 
-      // Update confirm password error if it exists
+      // 更新確認密碼錯誤（如果存在）
       if (errors.confirmPassword) {
         if (!formData.confirmPassword) {
           newErrors.confirmPassword =
@@ -68,11 +68,11 @@ export const ChangePassword: React.FC = () => {
         }
       }
 
-      // Update errors with new locale messages
+      // 使用新語系訊息更新錯誤
       setErrors(newErrors);
     }
 
-    // Update submit error message if it exists
+    // 更新提交錯誤訊息（如果存在）
     if (submitError) {
       setSubmitError(t.changePassword.errorMessage);
     }
@@ -81,14 +81,75 @@ export const ChangePassword: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: '' }));
-    }
+    const updatedFormData = { ...formData, [name]: value };
+    setFormData(updatedFormData);
+
+    // 當使用者開始輸入時清除提交錯誤
     if (submitError) {
       setSubmitError('');
     }
+
+    // 即時驗證
+    const newErrors: Record<string, string> = { ...errors };
+
+    // 驗證帳號
+    if (name === 'account') {
+      if (!value) {
+        newErrors.account = t.changePassword.validation.accountRequired;
+      } else {
+        delete newErrors.account;
+      }
+    }
+
+    // 驗證目前密碼
+    if (name === 'currentPassword') {
+      if (!value) {
+        newErrors.currentPassword =
+          t.changePassword.validation.currentPasswordRequired;
+      } else {
+        // 如果之前是因為密碼錯誤而顯示的錯誤，清除它
+        delete newErrors.currentPassword;
+      }
+    }
+
+    // 驗證新密碼（即時檢查規則）
+    if (name === 'newPassword') {
+      if (!value) {
+        newErrors.newPassword = t.changePassword.validation.newPasswordRequired;
+      } else if (!validatePassword(value)) {
+        newErrors.newPassword = t.changePassword.validation.newPasswordWeak;
+      } else {
+        delete newErrors.newPassword;
+      }
+
+      // 如果確認密碼已經有值，需要重新驗證是否匹配
+      if (updatedFormData.confirmPassword) {
+        if (value !== updatedFormData.confirmPassword) {
+          newErrors.confirmPassword =
+            t.changePassword.validation.passwordMismatch;
+        } else {
+          delete newErrors.confirmPassword;
+        }
+      }
+    }
+
+    // 驗證確認密碼
+    if (name === 'confirmPassword') {
+      if (!value) {
+        newErrors.confirmPassword =
+          t.changePassword.validation.confirmPasswordRequired;
+      } else if (
+        updatedFormData.newPassword &&
+        value !== updatedFormData.newPassword
+      ) {
+        newErrors.confirmPassword =
+          t.changePassword.validation.passwordMismatch;
+      } else {
+        delete newErrors.confirmPassword;
+      }
+    }
+
+    setErrors(newErrors);
   };
 
   const validateForm = (): boolean => {
@@ -131,17 +192,15 @@ export const ChangePassword: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      // TODO: 串接 LDAP API - 呼叫密碼修改服務
-      // 此處呼叫 changePassword 函數，該函數需要實作實際的 LDAP API 串接
-      // 當 LDAP API 實作完成後，此處的錯誤處理邏輯可能需要根據實際 API 回應進行調整
+      // 呼叫密碼修改服務
       await changePassword(
         formData.account,
         formData.currentPassword,
         formData.newPassword
       );
+      // 成功 - 顯示成功訊息並導回首頁
       // TODO: 優化成功處理流程
       // 目前使用 alert 顯示成功訊息，建議改為更友善的 UI 提示（例如：Toast 通知）
-      // Success - could navigate to success page or show success message
       alert(t.changePassword.successMessage);
       router.push('/');
     } catch (error: any) {
@@ -194,6 +253,38 @@ export const ChangePassword: React.FC = () => {
 
   const handleBack = () => {
     router.push('/');
+  };
+
+  // 檢查密碼要求是否滿足
+  const checkPasswordRequirement = (requirement: number): boolean => {
+    const password = formData.newPassword;
+    if (!password) return false;
+
+    switch (requirement) {
+      case 1: // 至少 8 個字元
+        return password.length >= 8;
+      case 2: // 至少包含一個大寫字母
+        return /[A-Z]/.test(password);
+      case 3: // 至少包含一個小寫字母
+        return /[a-z]/.test(password);
+      case 4: // 至少包含一個數字
+        return /[0-9]/.test(password);
+      case 5: // 至少包含一個特殊字元
+        return /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+      default:
+        return false;
+    }
+  };
+
+  // 檢查所有密碼要求是否都滿足
+  const areAllRequirementsMet = (): boolean => {
+    return (
+      checkPasswordRequirement(1) &&
+      checkPasswordRequirement(2) &&
+      checkPasswordRequirement(3) &&
+      checkPasswordRequirement(4) &&
+      checkPasswordRequirement(5)
+    );
   };
 
   return (
@@ -323,11 +414,76 @@ export const ChangePassword: React.FC = () => {
               {t.changePassword.passwordRequirements}
             </h3>
             <ul className="requirements-list">
-              <li>{t.changePassword.requirement1}</li>
-              <li>{t.changePassword.requirement2}</li>
-              <li>{t.changePassword.requirement3}</li>
-              <li>{t.changePassword.requirement4}</li>
-              <li>{t.changePassword.requirement5}</li>
+              <li
+                className={checkPasswordRequirement(1) ? 'requirement-met' : ''}
+              >
+                <span
+                  className={`requirement-icon ${
+                    checkPasswordRequirement(1)
+                      ? 'requirement-checkmark'
+                      : 'requirement-unmet'
+                  }`}
+                >
+                  {checkPasswordRequirement(1) ? '✓' : '✕'}
+                </span>
+                {t.changePassword.requirement1}
+              </li>
+              <li
+                className={checkPasswordRequirement(2) ? 'requirement-met' : ''}
+              >
+                <span
+                  className={`requirement-icon ${
+                    checkPasswordRequirement(2)
+                      ? 'requirement-checkmark'
+                      : 'requirement-unmet'
+                  }`}
+                >
+                  {checkPasswordRequirement(2) ? '✓' : '✕'}
+                </span>
+                {t.changePassword.requirement2}
+              </li>
+              <li
+                className={checkPasswordRequirement(3) ? 'requirement-met' : ''}
+              >
+                <span
+                  className={`requirement-icon ${
+                    checkPasswordRequirement(3)
+                      ? 'requirement-checkmark'
+                      : 'requirement-unmet'
+                  }`}
+                >
+                  {checkPasswordRequirement(3) ? '✓' : '✕'}
+                </span>
+                {t.changePassword.requirement3}
+              </li>
+              <li
+                className={checkPasswordRequirement(4) ? 'requirement-met' : ''}
+              >
+                <span
+                  className={`requirement-icon ${
+                    checkPasswordRequirement(4)
+                      ? 'requirement-checkmark'
+                      : 'requirement-unmet'
+                  }`}
+                >
+                  {checkPasswordRequirement(4) ? '✓' : '✕'}
+                </span>
+                {t.changePassword.requirement4}
+              </li>
+              <li
+                className={checkPasswordRequirement(5) ? 'requirement-met' : ''}
+              >
+                <span
+                  className={`requirement-icon ${
+                    checkPasswordRequirement(5)
+                      ? 'requirement-checkmark'
+                      : 'requirement-unmet'
+                  }`}
+                >
+                  {checkPasswordRequirement(5) ? '✓' : '✕'}
+                </span>
+                {t.changePassword.requirement5}
+              </li>
             </ul>
           </div>
 
@@ -349,7 +505,7 @@ export const ChangePassword: React.FC = () => {
             <button
               type="submit"
               className="button button-primary"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !areAllRequirementsMet()}
             >
               {isSubmitting ? t.common.loading : t.changePassword.submitButton}
             </button>

@@ -27,7 +27,7 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
   const [locale, setLocaleState] = useState<Locale>(defaultLocale);
   const [mounted, setMounted] = useState(false);
 
-  // Handle client-side only localStorage access
+  // 處理僅在客戶端存取 localStorage
   useEffect(() => {
     setMounted(true);
     const saved = localStorage.getItem('locale') as Locale;

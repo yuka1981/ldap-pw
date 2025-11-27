@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
       try {
         await client.bind(userDN, currentPassword);
       } catch (bindError: any) {
-        // LDAP 錯誤碼 49: 認證失敗（Invalid Credentials）
+        // LDAP 錯誤碼 49: 認證失敗（無效的憑證）
         if (bindError.code === 49) {
           return NextResponse.json(
             {
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
       try {
         await client.modify(userDN, changes);
       } catch (modifyError: any) {
-        // LDAP 錯誤碼 53: 密碼策略違規（Password Policy Violation）
+        // LDAP 錯誤碼 53: 密碼策略違規
         if (modifyError.code === 53) {
           return NextResponse.json(
             {
